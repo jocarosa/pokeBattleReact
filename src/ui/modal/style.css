@@ -1,0 +1,133 @@
+.my-modal .modal-content {
+    width:500px;
+    background-image: linear-gradient(red 30%,white 30%);
+   border-radius: 50%;
+   
+  }
+@media only screen and (max-width: 600px) {
+    .my-modal .modal-content{
+        border-radius: 5%;
+        width:100%;
+
+    }
+    .pokemonImage{
+        margin-left: -10%;
+        display: block;
+    }
+    .containerInfo{
+      padding-right: 100px;
+    }
+    
+    .containerEvolution{
+        margin-left: 0 !important;
+        
+        
+    }
+    .containerName{
+        margin-left: 20px !important;
+        
+    }
+    .containerImage{
+        margin-left: 20px !important;
+    }
+
+    
+}
+.containerInfo{
+    height:400px;
+    margin-top:112px;
+    margin-left:22px;
+    color:black;
+    width:400px;
+ 
+}
+
+.containerName{
+    background-color:black;
+    display: inline-block;
+    margin: 12px 0 0 90px;
+    width:225px;
+    text-align: center;
+    height:35px;
+    color:white;
+    padding-top:5px;
+    border-radius: 0px 0 12px 12px;
+    box-shadow: 2px 4px 10px gray;
+}
+.styleClose a{
+    float:right;
+    color:white;
+    font-size: 20px;
+    font-weight: bold;
+    
+}
+.containerInfo td{
+    color:black;
+    
+    
+}
+.stylePokeIcon{
+    margin-right: 10px;
+    margin-top:-4px;
+}
+.styleNo{
+    color:#c23616;
+    margin:0 11px 0 5px;
+}
+.containerTypes{
+    margin:auto;
+    text-align: center;
+}
+
+.type{
+  
+    float:left;
+    padding:3px;
+    font-size: 15px;
+}
+.type img{
+   width:45px;
+   height:50px;
+}
+ .containerDescription{
+    height:80px;
+    overflow-y: auto;
+    padding:10px;
+    margin:10px;
+    font-size: 14px;
+    
+}
+.containerEvolution{
+    width:300px;
+    margin-left: 60px;
+    height:120px;
+    overflow-x: auto;
+   
+}
+.containerEvolution img{
+    width:60px;
+    height:80px;
+}
+.pokemonImage{
+    width:8em;
+    height:8em;
+    margin-left: 200%;
+}
+.containerImage{
+  
+    width:30px;
+    height:32px;
+   
+    display: block;
+    margin-left:25%;
+    position:relative;
+  
+}
+
+  .stylePokeChain{
+      float:left;
+      width:70px;
+      height:70x;
+      margin: 15px;
+
+  }

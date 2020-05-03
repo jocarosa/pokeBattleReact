@@ -1,0 +1,144 @@
+
+
+.containerProgressBar {
+   width: 100%;
+        z-index: 1;
+        background-color:rgb(255,138,101);
+        padding: 12px;
+        height: 100px;
+    /* 
+    position:fixed;
+    z-index: 5;
+    background-color: rgb(191,54,12);
+    padding: 12px; */
+}
+.progressbar {
+    counter-reset: step;
+}
+
+.progressbar li {
+    list-style-type: none;
+    width: 25%;
+    float: left;
+    font-size: 12px;
+    font-weight: bold;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color:white;
+    
+}
+.progressbar li:before {
+    width: 30px;
+    height: 30px;
+    content: counter(step);
+    counter-increment: step;
+    line-height: 30px;
+    border: 2px solid white;
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+    padding-bottom: 2px;
+    background-color: rgb(224,224,224);
+}
+.progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: rgb(224,224,224);
+    top: 15px;
+    left: -50%;
+    z-index: -1;
+    
+}
+.progressbar li:first-child:after {
+    content: none;
+ 
+}
+.progressbar li.active {
+    color:rgb(109,76,65);
+    
+   
+}
+.progressbar li.active:before {
+    border-color: rgb(109,76,65);
+    
+}
+.progressbar li.active + li:after {
+    background-color:rgb(78,52,46);
+    
+}
+
+.styleBackForward{
+    bottom: 0;
+    position: fixed;
+    width:100%;
+
+}
+
+/* .styleBackForward div{
+        width:50%;
+        float:left;
+        cursor: pointer;
+        background-color: white;
+        color:black;
+        font-weight: bold;
+        padding:4px;
+        border-radius: 12px 12px 0 0;
+    
+}
+.styleBackForward div:hover{
+   
+    background-color:rgb(109,76,65);
+    color:white;
+
+} */
+
+.nextContainer{
+  
+        width:20%;
+        float:right;
+        cursor: pointer;
+        background-color: white;
+        color:black;
+        font-weight: bold;
+        padding:4px;
+        border-radius: 12px 12px 0 0;
+        
+}
+.nextContainer:hover{
+       
+    background-color:rgb(109,76,65);
+    color:white;
+}
+
+
+.styleArrowImg{
+    width: 30px;
+    height:30px;
+    margin:8px;
+
+}
+
+.showNext{
+    display:block;
+}
+.hideNext{
+    display: none;
+
+}
+
+@media only screen and (max-width: 400px) {
+    .containerProgressBar {
+        width: 100%;
+        z-index: 1;
+        background-color:rgb(255,138,101);
+        padding: 12px;
+        height: 100px;
+    }    
+    .nextContainer{
+       width:35%;
+    }
+}
