@@ -30,7 +30,7 @@
 .itemPokemon{
    
     padding:20px;
-    border:1px solid #ff8171;
+    border:1px solid #1d100d;
     margin: 5px;
     border-radius: 12px;
     width: 20%;
@@ -50,7 +50,9 @@
   /* margin: 23% 0  0 -30px; */
   width:100%;
   height:25%;
-  background-color: rgb(78,52,46);
+  background-color: #1d100df0;
+  float: left;
+  padding-top: 20px;
   
 }
 .containerPokeChoose{
@@ -67,7 +69,7 @@
 
 .styleXChoose{
   font-size: 17px;
-  color:#3d1414;
+  color:#6b3e35;
   font-weight: bold;
   cursor: pointer;
   float: left;
@@ -95,16 +97,24 @@
 .showChooseSuccess{
     width: 50px;
     height:50px;
-    display: inline-block;
-    margin-top: 4%;
-    
+    margin-top: 1%;
+    float: left;
   }
 
+  .showErrorMessage{
+    display: inline;
+  }
+  .hideErrorMessage{
+    display: none;
+  }
 .containerPokemon{
-  /* height:20%;
-  overflow-y: auto;
-  margin-top: 18%; */
-  margin-top: 6%;
+  margin-top: 20%;
+}
+.styleErrorMessage{
+  color:red;
+}
+.hideCheckBox{
+  display:none;
 }
 @media only screen and (max-width: 400px) {
 
@@ -121,13 +131,13 @@
     }
     .itemPokemon{
       padding:20px;
-      border:1px solid #ff8171;
       margin: 5px;
       border-radius: 12px;
       width: 28% !important;
       height:18% !important;
       float: left;
       margin-left: 10px;
+      border:1px solid #1d100d;
     }
     .stylePokemonImg{
       margin: -90% 0 0 -20px;
@@ -141,7 +151,7 @@
   
       width:100%;
       height:20%;
-      background-color: rgb(78,52,46);
+      background-color: #1d100df0;
       
     }
     .containerPokeChoose{
@@ -157,12 +167,14 @@
     .styleXChoose{
       float: left;
       font-size: 12px;
-      color:red;
+      color:#6b3e35;
       padding: 1px;
     }
     .showChooseSuccess{
       width: 30px;
       height:35px;
+      margin-left: 45%;
+      
     }
 }
 
@@ -171,14 +183,15 @@
     top:0 !important;
     z-index: 1;
     width: 100%;
-    background-color:rgb(78,52,46) ;
+    background-color:#1d100df0;
 
 }
 .sticky-nav a{
     color:white;
 }
 .styleInputSearch{
-  width:20%; ;
+  width:20%; 
+  margin-top: 10px;
 }
 
 
