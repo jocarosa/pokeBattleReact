@@ -9,28 +9,31 @@ let NEXT = styled.div`
 let PREVIOUS = styled.div`
   animation: 1s  ${keyframes `${bounceInRight}`}
 `
+
+
+
 const BACKFORWARD =(props)=>{
         
     return (
         
         <div className='styleBackForward'>
-            {/* <div>
+              <div className={props.steps.stepTwo?"showButton":"hideButton"}>
                 <PREVIOUS>
+                    <div onClick={()=>props.changeView(null)} className='previousContainer'>
                     <img className='styleArrowImg' src={require('../../../img/previous_arrow.png')}></img>
-                    Previous 
-                </PREVIOUS>
-             </div> */}
+                        Previous 
+                    </div>
+                </PREVIOUS> 
+             </div>  
              
-                <div  className={props.steps.showNextButton?"showNext":"hideNext"}>
+            <div  className={props.steps.showNextButton?"showButton":"hideButton"}>
                 <NEXT>
-                    <div className='nextContainer'>
-                    Next
+                    <div onClick={()=>props.changeView('next')} className='nextContainer'>
+                        Next
                     <img className='styleArrowImg' src={require('../../../img/next_arrow.png')}></img>
                     </div>
-                    </NEXT>
-                </div>
-            
-          
+                </NEXT>
+            </div>
         </div>
         
     )

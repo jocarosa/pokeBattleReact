@@ -1,0 +1,8 @@
+.containerOponents{
+    border:1px solid red;
+    float: left;
+}
+.hideContainer{
+    display: none;
+  }
+

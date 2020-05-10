@@ -5,17 +5,15 @@ import React ,  {Component} from 'react';
 import Search from './search-cmp';
 import GenerationsList from '../left/generation-list-cmp';
 import PokemonDetailModal from '../modal/pokemon-modal';
+import LISTOPONENTS from './list-oponents/list-oponents-cmp';
 //import Paginator from './pagination';
 import { itemsByPage , urlAnimated , urlNormal} from '../../share';
 import { fetchPokemonData } from '../../services/fetchPokemonData';
 
 //styles
-import { Navbar,Nav,DropdownButton } from 'react-bootstrap';
 import './style.css';
-import styled, { keyframes } from 'styled-components';
 
 //animations
-import { bounceInLeft, fadeOut } from 'react-animations';
 import {Animated} from "react-animated-css";
 
 //redux
@@ -41,14 +39,7 @@ const mapStateProps = state => {
     }
   }
 
-const CONTAINERPOKE = styled.div`
-  animation: 1s  ${keyframes `${bounceInLeft}`}
-`;
 
-const MESSAGEEXCEDED = styled.div`
-    color:red;
-    animation: 12s  ${keyframes `${fadeOut}`};
-`;
 
 class List extends Component{
 
@@ -61,7 +52,10 @@ class List extends Component{
         description:null,
         chain:null,
         listaSeleccionados:0,
-        exceedErrorVisible:false
+        exceedErrorVisible:false,
+        stepTwo:false,
+        stepOne:true,
+        stepThree:false
     }
     showErrorExClass = false;
     styleHover;
@@ -153,7 +147,6 @@ class List extends Component{
                 pokemonList = results;
                 pokemonListTwo = results;
                 this.setState({pokemonList,pokemonListTwo,listFetched:true})
-               // this.props.addPokemonList(pokemonList);
            }
        )
     }
@@ -165,21 +158,15 @@ class List extends Component{
         if(this.state.listaSeleccionados == 6 &&  isChecked){
             this.showErrorMessage();
             return
-        }
-
-        if(isChecked){
+        }else if(isChecked){
             this.setState(
                 (prev,p)=>({listaSeleccionados : prev.listaSeleccionados + 1}),
-                ()=>{
-                  
-                }
+                ()=>{}
             )
         }else{
             this.setState(
                 (prev,p)=>({listaSeleccionados : prev.listaSeleccionados - 1}),
-                ()=>{
-                    console.log(this.state.listaSeleccionados);
-                 }
+                ()=>{}
                )
         }
 
@@ -220,7 +207,7 @@ class List extends Component{
             exceedErrorVisible:false
         }) 
        })
-       this.showErrorEx = true;
+       this.showErrorExClass = true;
     }
 
     getPokemonIndexFromList = (pokemonList,pokemonName)=>{
@@ -277,109 +264,125 @@ class List extends Component{
     }
     getDefaultImgBall=(index)=>{
         return (
-            <div className='containerPokeChoose'>
+            <div key={index} className='containerPokeChoose'>
                 <img key={index} className='styleBallChooseTwo' src={require('../../img/pokeball.png')}></img>
             </div>
         )
     }
+    
+    filterPokemonByNo = (thispokemon)=>{
+
+        const pokemonNo = this.getPokemonNo(thispokemon);
+        const isPokemonOfGeneration = pokemonNo <= this.state.limit;
+        return isPokemonOfGeneration;
+    }
+    getPokemonNo = (thispokemon)=>{
+        const pokemonNo = thispokemon.url.split("/")[6];
+        thispokemon["pokemonNo"] = parseInt(pokemonNo);
+        return pokemonNo;   
+    }
+
+    getPokemonList=()=>{
+        let pokemonListContainer =  this.state.pokemonList.filter(p=>this.filterPokemonByNo(p))
+        .map((thispokemon,index)=>{
+            const isChecked = this.state.pokemonList[index].isChecked || false;
+            return (
+                <PokemonItem 
+                key={index}
+                selectPokemon={(pokemonSelected)=>this.handleSelectedPokemon(pokemonSelected)} 
+                isChecked = {isChecked}
+                pokemonIn = {thispokemon}>
+                </PokemonItem> 
+                )
+        })
+        return pokemonListContainer;
+    }
+
+    handleChangeViewBySteps =(btn)=>{
+
+            if(btn =='next' && this.state.stepTwo){
+
+                return;
+            }
+
+            this.setState(
+                (previous,p)=>({
+                    stepTwo: !previous.stepTwo,
+                    stepOne: !previous.stepOne
+                })
+            );
+      
+    }  
+
     render(){
 
-        let pokemonListContainer = <h2>Loading...</h2>;
-        
-
-
+        let pokemonList;
+       
         if(this.state.listFetched){
-
-            const filterPokemonByNo = (thispokemon)=>{
-
-                const pokemonNo = getPokemonNo(thispokemon);
-                const isPokemonOfGeneration = pokemonNo <= this.state.limit;
-                return isPokemonOfGeneration;
-            }
-            const getPokemonNo = (thispokemon)=>{
-                const pokemonNo = thispokemon.url.split("/")[6];
-                thispokemon["pokemonNo"] = parseInt(pokemonNo);
-                return pokemonNo;   
-            }
-            pokemonListContainer =  this.state.pokemonList.filter(p=>filterPokemonByNo(p))
-            .map((thispokemon,index)=>{
-                
-                const isChecked = this.state.pokemonList[index].isChecked || false;
-                return (
-                    <PokemonItem 
-                    key={index}
-                    selectPokemon={(pokemonSelected)=>this.handleSelectedPokemon(pokemonSelected)} 
-                    isChecked = {isChecked}
-                    pokemonIn = {thispokemon}>
-                    </PokemonItem> 
-                    )
-                    
-            })
-
-
+             pokemonList = this.getPokemonList();
         }
-
 
         return(
             <>
-            {/* 
-                <Navbar className='sticky-nav' >
-                    <Navbar.Brand href="#home">Poke Arena</Navbar.Brand>
-                    <Nav className="mr-auto">
-                    <Search className='styleDropdown' onChange={this.handlePokemonSearch}/>
-                    { <DropdownButton variant="outline-danger" className='styleDropdown' id="dropdown-basic-button" title="Generation">
-                        <GenerationsList handleGetPokeByGeneration = {this.handleGetPokeByGeneration} />
-                    </DropdownButton> }
-                    </Nav>
-                </Navbar> */}
-                                
                 <div className='sticky-nav'>
                     <Search onChange={this.handlePokemonSearch}/>
-                    <Steps></Steps>
-                    <div className='containerPokemonsChoosen'>
-                        {this.getImgsPokemonsSelected()}
-                        <img className=
-                        {this.state.showNextButton?'showChooseSuccess':'hideChooseSuccess'} 
-                        src={require('../../img/chooseSuccess.png')}></img>
-                    
+                    <Steps state={this.state}></Steps>
                     <Animated 
-                    animationOutDuration={7000}
-                    animationOut="fadeOut" isVisible={
-                        this.state.exceedErrorVisible
-                    }>
-                        <div className={this.showErrorExClass?'showErrorMessage':'hideErrorMessage'}>
-                            <label>error</label>
+                        animationInDuration={1000}
+                        animationIn="bounceInDown" 
+                        isVisible={this.state.stepTwo}>
+                            <div className='containerOponentChoosen'>
+                                hello oponent choose
+                            </div>
+                    </Animated>
+                    <Animated 
+                        animationInDuration={1000}
+                        animationIn="bounceInDown" 
+                        isVisible={!this.state.stepTwo}>
+                        <div className={
+                            !this.state.stepTwo?'containerPokemonsChoosen':
+                            'hideContainer'
+                        }>
+                            {this.getImgsPokemonsSelected()}
+                            <img className=
+                            {this.state.showNextButton?'showChooseSuccess':'hideChooseSuccess'} 
+                            src={require('../../img/chooseSuccess.png')}></img>
+                        
+                            <Animated 
+                            animationOutDuration={7000}
+                            animationOut="fadeOut" isVisible={this.state.exceedErrorVisible}>
+                                <div 
+                                    className={this.showErrorExClass
+                                    ?'showErrorMessage':'hideContainer'}>
+                                    <label>Puedes escoger solo 6 pokemon!</label>
+                                </div>
+                            </Animated>     
                         </div>
-                    </Animated>     
-                    
-                        
-                        {/* <MESSAGEEXCEDED 
-                        className={this.state.exceedErrorVisible?
-                        'showErrorMessage':'hideErrorMessage'}>
-                        You can choose only 6!
-                        </MESSAGEEXCEDED>  */}
-                        
-                    </div>
-    
-                    
+                    </Animated>
                 </div>
-                
-    
-                <CONTAINERPOKE>
-                    <div className='containerPokemon' >
-                        {pokemonListContainer}
+                    <div className={!this.state.stepTwo?
+                        'containerPokemon':'hideContainer'}>
+                        <Animated 
+                        animationInDuration={2500}
+                        animationIn="slideInLeft" 
+                        isVisible={true}>
+                                {pokemonList}
+                        </Animated>
                     </div>
-                </CONTAINERPOKE>
-                <BACKFORWARD steps={this.state}></BACKFORWARD>
-            
+                <div className='containerPokemon'>
+                    <LISTOPONENTS stepTwo={this.state.stepTwo}></LISTOPONENTS>
+                </div>
+                    
+                <BACKFORWARD 
+                changeView={(btn)=>this.handleChangeViewBySteps(btn)} 
+                steps={this.state}></BACKFORWARD>
+                  
                 <PokemonDetailModal
                 chain = {this.state.chain}
                 description = {this.state.description}
                 types = {this.state.types}
                 show={this.state.modalShow}
                 onHide={()=>this.handleModalHide()} />
-
-                {/* <Paginator config={this.state} handlePokemonApi={this.handlePokemonApi} /> */}
             </>
         )
 
@@ -406,10 +409,7 @@ class PokemonItem extends Component{
         this.state = {
             hover: false,
             url,
-           /* pokemonSelected : this.props.isPokeChecked || false,
-            noSelected:0*/
         };
-        //this.pokemonSelected = this.props.isPokeChecked;
     }
     pokemonSelected;
 
@@ -448,7 +448,7 @@ class PokemonItem extends Component{
                 <div  className="checkbox custom">
                  <input 
                   onClick={()=>selectPokemon(pokemonName,this.props.isChecked)}
-                   checked={this.props.isChecked}  
+                    checked={this.props.isChecked}
                    id={pokemonName} className="css-checkbox" type="checkbox" />
                  <label htmlFor={pokemonName} className="css-label-red"></label> 
                 </div>

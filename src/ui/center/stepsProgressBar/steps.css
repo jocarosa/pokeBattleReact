@@ -96,6 +96,16 @@
         border-radius: 12px 12px 0 0;
         
 }
+.previousContainer{
+    width:20%;
+        float:left;
+        cursor: pointer;
+        background-color: white;
+        color:black;
+        font-weight: bold;
+        padding:4px;
+        border-radius: 12px 12px 0 0;
+}
 .nextContainer:hover{  
     background-color:rgb(109,76,65);
     color:white;
@@ -108,11 +118,10 @@
     margin:8px;
 
 }
-
-.showNext{
+.showButton{
     display:block;
 }
-.hideNext{
+.hideButton{
     display: none;
 
 }
@@ -126,5 +135,8 @@
     }
     .nextContainer{
        width:35%;
+    }
+    .previousContainer{
+        width:35%;
     }
 }
