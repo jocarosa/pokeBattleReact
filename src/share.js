@@ -90,3 +90,4 @@ export const gen = [{
 
 export const urlAnimated = "https://img.pokemondb.net/sprites/black-white/anim/normal/";
 export const urlNormal = "https://img.pokemondb.net/sprites/platinum/normal/";
+export const urlBackAnimated = "https://img.pokemondb.net/sprites/black-white/anim/back-normal/";

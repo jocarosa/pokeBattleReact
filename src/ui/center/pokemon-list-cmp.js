@@ -3,9 +3,9 @@ import React ,  {Component} from 'react';
 
 //cmp
 import Search from './search-cmp';
-import GenerationsList from '../left/generation-list-cmp';
 import PokemonDetailModal from '../modal/pokemon-modal';
 import LISTOPONENTS from './list-oponents/list-oponents-cmp';
+import BATTLE_ARENA from './arena/battle-arena-cmp';
 //import Paginator from './pagination';
 import { itemsByPage , urlAnimated , urlNormal} from '../../share';
 import { fetchPokemonData } from '../../services/fetchPokemonData';
@@ -59,6 +59,7 @@ class List extends Component{
     }
     showErrorExClass = false;
     styleHover;
+    pokemonRandom;
 
     constructor(props){
         super(props);
@@ -155,7 +156,7 @@ class List extends Component{
         
         const isChecked = pokemonSelected.checked;
         
-        if(this.state.listaSeleccionados == 6 &&  isChecked){
+        if(this.state.listaSeleccionados === 6 &&  isChecked){
             this.showErrorMessage();
             return
         }else if(isChecked){
@@ -194,7 +195,7 @@ class List extends Component{
     toggleNextButton=()=>{
         const cantidadSeleccionados = this.state.listaSeleccionados;
         this.setState({
-            showNextButton: cantidadSeleccionados == 6
+            showNextButton: cantidadSeleccionados === 6
         })
     }
 
@@ -218,7 +219,7 @@ class List extends Component{
         return index;
     }
 
-    getImgsPokemonsSelected = ()=>{
+    getImgsPokemonsSelected = (includeCloseButton)=>{
 
         let allPokeImgsSelected = [];
         const seleccionados = this.getPokemonsSelectedistObject();
@@ -227,7 +228,7 @@ class List extends Component{
             if(typeof seleccionados[index-1]  !== "undefined"){
                 
                 allPokeImgsSelected.push(
-                    this.getPokeImgSelected(index)
+                    this.getPokeImgSelected(index,includeCloseButton)
                 );
                 continue;
             }
@@ -247,25 +248,30 @@ class List extends Component{
 
         return seleccionados;
     }
-    getPokeImgSelected(index){
+    getPokeImgSelected(index,includeCloseButton){
         
         const seleccionados = this.getPokemonsSelectedistObject();
         const pokemonName = seleccionados[index-1].name;
         return (
-            <div className='containerPokeChoose'>
-                    <img className='styleImgPokeChoose' key={index} 
+            <div key={index} className='containerPokeChoose'>
+                    <img alt="" className='styleImgPokeChoose' key={index} 
                     src={`${urlNormal}${pokemonName}.png`}></img>
-                    <label onClick={()=>this.handleSelectedPokemon({
+                    <label                   
+                    onClick={()=>this.handleSelectedPokemon({
                         pokemonName,
                         checked:false
-                    })}className='styleXChoose'>X</label> 
+                    })}className='styleXChoose'>
+                        <span 
+                        className={includeCloseButton?"showContainer":"hideContainer"}>X
+                        </span>
+                    </label> 
             </div>    
         )
     }
     getDefaultImgBall=(index)=>{
         return (
             <div key={index} className='containerPokeChoose'>
-                <img key={index} className='styleBallChooseTwo' src={require('../../img/pokeball.png')}></img>
+                <img alt="" key={index} className='styleBallChooseTwo' src={require('../../img/pokeball.png')}></img>
             </div>
         )
     }
@@ -300,20 +306,29 @@ class List extends Component{
 
     handleChangeViewBySteps =(btn)=>{
 
-            if(btn =='next' && this.state.stepTwo){
-
+            if(btn ==='next' && this.state.stepTwo){
+                return;
+            }else if(btn==='play'){
+                this.setState({
+                    play: true,
+                    pokemonsNamesRandom: this.pokemonRandom,
+                    pokemonSelectedListOfNames: this.getPokemonsSelectedistObject()
+                });
                 return;
             }
 
             this.setState(
                 (previous,p)=>({
                     stepTwo: !previous.stepTwo,
+                    play:false,
                     stepOne: !previous.stepOne
                 })
             );
       
     }  
-
+    setPokemonRandom(pokemonRandom){
+        this.pokemonRandom = pokemonRandom;
+    }
     render(){
 
         let pokemonList;
@@ -322,7 +337,8 @@ class List extends Component{
              pokemonList = this.getPokemonList();
         }
 
-        return(
+        const showCloseButton = true;
+            return(
             <>
                 <div className='sticky-nav'>
                     <Search onChange={this.handlePokemonSearch}/>
@@ -332,7 +348,7 @@ class List extends Component{
                         animationIn="bounceInDown" 
                         isVisible={this.state.stepTwo}>
                             <div className='containerOponentChoosen'>
-                                hello oponent choose
+                                
                             </div>
                     </Animated>
                     <Animated 
@@ -343,8 +359,8 @@ class List extends Component{
                             !this.state.stepTwo?'containerPokemonsChoosen':
                             'hideContainer'
                         }>
-                            {this.getImgsPokemonsSelected()}
-                            <img className=
+                            {this.getImgsPokemonsSelected(showCloseButton)}
+                            <img alt="" className=
                             {this.state.showNextButton?'showChooseSuccess':'hideChooseSuccess'} 
                             src={require('../../img/chooseSuccess.png')}></img>
                         
@@ -370,7 +386,16 @@ class List extends Component{
                         </Animated>
                     </div>
                 <div className='containerPokemon'>
-                    <LISTOPONENTS stepTwo={this.state.stepTwo}></LISTOPONENTS>
+                    <LISTOPONENTS 
+                     state={this.state}
+                     pokemonSelected ={this.getImgsPokemonsSelected(false)}
+                     pokemonRandom = {(pokemonRandom)=>this.setPokemonRandom(pokemonRandom)}
+                     >                         
+                    </LISTOPONENTS>
+
+                    <BATTLE_ARENA
+                    state={this.state}>
+                    </BATTLE_ARENA>
                 </div>
                     
                 <BACKFORWARD 
@@ -447,6 +472,7 @@ class PokemonItem extends Component{
                  onMouseOut={ () => onOutPokemon() } >
                 <div  className="checkbox custom">
                  <input 
+                 onChange={()=>{}}
                   onClick={()=>selectPokemon(pokemonName,this.props.isChecked)}
                     checked={this.props.isChecked}
                    id={pokemonName} className="css-checkbox" type="checkbox" />

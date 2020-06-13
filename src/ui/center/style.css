@@ -30,7 +30,8 @@
 .itemPokemon{
    
     padding:20px;
-    border:1px solid #1d100d;
+    border:1px solid #0e0807;
+    background-color: #f5f5f503;
     margin: 5px;
     border-radius: 12px;
     width: 20%;
@@ -48,7 +49,7 @@
 .containerPokemonsChoosen{
   width:100%;
   height:25%;
-  background-color: #1d100df0;
+  background-color: #ffe289;
   float: left;
   padding-top: 20px;
   
@@ -79,6 +80,7 @@
   font-weight: bold;
   cursor: pointer;
   float: left;
+  visibility: visible;
 }
 
 .styleBallChoose{
@@ -113,6 +115,9 @@
   }
   .hideContainer{
     visibility: hidden;
+  }
+  .showContainer{
+    visibility: visible;
   }
 .containerPokemon{
   visibility: visible;
@@ -159,7 +164,7 @@
   
       width:100%;
       height:20%;
-      background-color: #1d100df0;
+      background-color: #ffe289;
       
     }
     .containerPokeChoose{
@@ -191,7 +196,7 @@
     top:0 !important;
     z-index: 1;
     width: 100%;
-    background-color:#1d100df0;
+    background-color:#1c100d;
 
 }
 .sticky-nav a{
