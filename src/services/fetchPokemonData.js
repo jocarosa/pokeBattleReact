@@ -1,19 +1,34 @@
-import  {get} from 'lodash';
+import  { get } from 'lodash';
+import { pokeApiUrl } from '../share';
 
 export async function fetchPokemonData(pokemonNo){
-
-    const resTypes = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonNo}/`);
-        const dataType = await resTypes.json();
-        const resDes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonNo}/`);
-        const dataDescription = await resDes.json();
-        const res = await fetch(dataDescription.evolution_chain.url);
-        const dataEvolutionChain = await res.json();
-        
-        dataEvolutionChain["evolves_from"] = get(dataDescription,'evolves_from_species.name','');
-
+       
         return {
-            chain : dataEvolutionChain,
-            description: dataDescription, 
-            types: dataType   
+            chain : getEvolutionChainInfo(pokemonNo),
+            description: getPokemonSpecieInfo(pokemonNo), 
+            types: getBasicPokemonInfo(pokemonNo)   
         }
+}
+
+async function getBasicPokemonInfo(pokemonNo){
+    return await fetch(`${pokeApiUrl}pokemon/${pokemonNo}/`).json();
+}
+
+async function getPokemonSpecieInfo(pokemonNo){
+    return await fetch(`${pokeApiUrl}pokemon-species/${pokemonNo}/`).json();
+}
+
+async function getEvolutionChainInfo(pokemonNo){
+    
+    let evolutionChainInfo = await fetch(
+        getBasicPokemonInfo(pokemonNo).evolution_chain.url).json();
+
+    evolutionChainInfo["evolves_from"] = get(
+        getPokemonSpecieInfo(pokemonNo),'evolves_from_species.name','');
+    
+    return evolutionChainInfo;
+
+}
+export async function getListOfPokemon(offset,limit){
+    return await fetch(`${pokeApiUrl}pokemon/?offset=${offset}&limit=${limit}`);
 }
