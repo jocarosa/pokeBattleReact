@@ -1,26 +1,22 @@
 import React  from 'react';
-import {gen} from '../../share';
-import { Dropdown} from 'react-bootstrap';
-const GenerationsList = ({handleGetPokeByGeneration}) =>{
+import { gen } from '../../share';
+import { Dropdown } from 'react-bootstrap';
+
+const GenerationsList = ({getPokemonListByGeneration}) =>{
     
-    let generationList = gen.map((e,i)=>{
+    const generationList = gen.map((e,i)=>{
         return (
 
-            <Dropdown.Item className='styleLinkDropdown' key={i} onClick={()=>handleGetPokeByGeneration(e)} href="#/">Generation {e.no}</Dropdown.Item>
-            // <li key={i}>
-            //     <a onClick={()=>handleGetPokeByGeneration(e)} href='/#'>Generation {e.no}</a>
-            // </li>
+            <Dropdown.Item className='styleLinkDropdown'
+                key={i} onClick={()=>getPokemonListByGeneration(e)} 
+                href="#/">Generation {e.no}
+             </Dropdown.Item>
         )
     })
     
     
     return (
         generationList
-       
-        // <div>
-        //     <label>Generations</label> 
-        //     <ul>{generationList}</ul>
-        // </div>
     )
 }
 
