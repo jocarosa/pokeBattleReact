@@ -2,6 +2,7 @@ export const ADD_POKEMON_LIST  ="ADD_POKEMON_LIST";
 export const DELETE_ARTICLE  ="DELETE_ARTICLE";
 
 
+export const pokeApiUrl = "https://pokeapi.co/api/v2/";
 
 export const mockListPokemon = [
             {
