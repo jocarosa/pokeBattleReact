@@ -112,34 +112,6 @@ class List extends Component{
             modalShow : false
         })
     }
-
-       
-    
-
-    addPokemonCheckedToMainList=( pokemonSelected )=>{
-
-        this.setState({
-            pokemonList : utilFunction.setPokemonSelectedToList(this.state.pokemonList,pokemonSelected),
-            pokemonListTwo : utilFunction.setPokemonSelectedToList(this.state.pokemonListTwo,pokemonSelected)
-        },()=>{
-            const cantidadSeleccionados = this.state.listaSeleccionados;
-            this.setState({
-                showNextButton: cantidadSeleccionados === 6
-            })
-        })
-    }
-
-    showErrorMessage=()=>{
-        this.setState({
-            exceedErrorVisible:true
-        })
-       setTimeout(()=>{
-        this.setState({
-            exceedErrorVisible:false
-        }) 
-       })
-       this.showErrorExClass = true;
-    }
    
     filterPokemonByNo = ( thispokemon )=>{
 
@@ -163,6 +135,18 @@ class List extends Component{
         return pokemonListContainer;
     }
 
+    showErrorMessage=()=>{
+        this.setState({
+            exceedErrorVisible:true
+        })
+       setTimeout(()=>{
+        this.setState({
+            exceedErrorVisible:false
+        }) 
+       })
+       this.showErrorExClass = true;
+    }
+    
     handleSelectedPokemon = ( pokemonSelected )=>{
         
         const isChecked = pokemonSelected.checked;
@@ -184,6 +168,19 @@ class List extends Component{
 
             
         this.addPokemonCheckedToMainList(pokemonSelected);
+    }
+
+    addPokemonCheckedToMainList=( pokemonSelected )=>{
+
+        this.setState({
+            pokemonList : utilFunction.setPokemonSelectedToList(this.state.pokemonList,pokemonSelected),
+            pokemonListTwo : utilFunction.setPokemonSelectedToList(this.state.pokemonListTwo,pokemonSelected)
+        },()=>{
+            const cantidadSeleccionados = this.state.listaSeleccionados;
+            this.setState({
+                showNextButton: cantidadSeleccionados === 6
+            })
+        })
     }
 
     handleModalShow(pokemon){
@@ -242,6 +239,31 @@ class List extends Component{
         });
   
     }
+
+    getContainerPokemonChoosen(){
+
+        return (
+            <div className={!this.state.stepTwo?'containerPokemonsChoosen':'hideContainer'}>
+                {utilFunction.getImgFromPokemonsSelectedList(this.state.pokemonListTwo, true)}
+                <img alt="" className=
+                {this.state.showNextButton?'showChooseSuccess':'hideChooseSuccess'} 
+                src={require('../../img/chooseSuccess.png')}></img>
+                {
+                utilFunction.getAnimatedComponent(
+                    7000,this.state.exceedErrorVisible,'fadeOut',
+                        (
+                        <div 
+                            className={this.showErrorExClass?'showErrorMessage':'hideContainer'}>
+                            <label>Puedes escoger solo 6 pokemon!</label>
+                        </div>
+                        )
+                    )
+                }
+            </div>
+        )
+
+    }
+
     render(){
 
         let pokemonList;
@@ -249,51 +271,28 @@ class List extends Component{
         if(this.state.listFetched){
              pokemonList = this.getPokemonList();
         }
-
-        const showCloseButton = true;
+       
             return(
             <>
                 <div className='sticky-nav'>
                     <Search onChange={this.filterPokemonListWhenSearch}/>
                     <Steps state={this.state}></Steps>
-                    <Animated 
-                        animationInDuration={1000}
-                        animationIn="bounceInDown" 
-                        isVisible={this.state.stepTwo}>
-                            <div className='containerOponentChoosen'>
-                                
-                            </div>
-                    </Animated>
-                    <Animated 
-                        animationInDuration={1000}
-                        animationIn="bounceInDown" 
-                        isVisible={!this.state.stepTwo}>
-                        <div className={!this.state.stepTwo?'containerPokemonsChoosen':'hideContainer'}>
-                            {utilFunction.getImgFromPokemonsSelectedList(this.state.pokemonListTwo, showCloseButton)}
-                            <img alt="" className=
-                            {this.state.showNextButton?'showChooseSuccess':'hideChooseSuccess'} 
-                            src={require('../../img/chooseSuccess.png')}></img>
-                        
-                            <Animated 
-                            animationOutDuration={7000}
-                            animationOut="fadeOut" isVisible={this.state.exceedErrorVisible}>
-                                <div 
-                                    className={this.showErrorExClass
-                                    ?'showErrorMessage':'hideContainer'}>
-                                    <label>Puedes escoger solo 6 pokemon!</label>
-                                </div>
-                            </Animated>     
-                        </div>
-                    </Animated>
+                    { 
+                        utilFunction.getAnimatedComponent(
+                            1000,this.state.stepTwo,'bounceInDown',
+                            (<div className='containerOponentChoosen'></div>)
+                        )
+                     }
+    
+                     {
+                         utilFunction.getAnimatedComponent(
+                            1000,!this.state.stepTwo,'bounceInDown', this.getContainerPokemonChoosen()
+                        )
+                     }
+
                 </div>
-                    <div className={!this.state.stepTwo?
-                        'containerPokemon':'hideContainer'}>
-                        <Animated 
-                        animationInDuration={2500}
-                        animationIn="slideInLeft" 
-                        isVisible={true}>
-                                {pokemonList}
-                        </Animated>
+                    <div className={!this.state.stepTwo?'containerPokemon':'hideContainer'}>
+                        {utilFunction.getAnimatedComponent(2500,true,'slideInLeft',pokemonList)}
                     </div>
                 <div className='containerPokemon'>
                     <LISTOPONENTS 

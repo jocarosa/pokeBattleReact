@@ -2,6 +2,10 @@
 import React from 'react';
 import { itemsByPage , urlAnimated , urlNormal} from '../share';
 
+//animations
+import { Animated } from "react-animated-css";
+
+
 export function filterPokemonListByName ( pokemonName , state ){
 
     let pokemonList = state.pokemonListTwo;
@@ -81,7 +85,7 @@ export function getImgFromPokemonsSelectedList( pokemonList , showCloseButton ){
            allPokeImgsSelected.push(img);
           continue;                 
        }   
-       
+
        allPokeImgsSelected.push(getDefaultPokeBallImg(index));
     
     }            
@@ -99,4 +103,17 @@ export function getDefaultPokeBallImg(index){
                 <img alt="" key={index} className='styleBallChooseTwo' src={require('../img/pokeball.png')}></img>
             </div>
         )    
+}
+
+
+
+export function getAnimatedComponent(animationInDuration, isVisible, animationType, body){
+    return (
+        <Animated 
+            animationInDuration={2500}
+            animationIn="slideInLeft" 
+            isVisible={true}>
+            {body}
+        </Animated>
+    )
 }
