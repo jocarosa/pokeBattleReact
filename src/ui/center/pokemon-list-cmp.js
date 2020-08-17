@@ -8,16 +8,18 @@ import LISTOPONENTS from './list-oponents/list-oponents-cmp';
 import BATTLE_ARENA from './arena/battle-arena-cmp';
 //import Paginator from './pagination';
 import { itemsByPage , urlAnimated , urlNormal} from '../../share';
-import { fetchPokemonData } from '../../services/fetchPokemonData';
+import { fetchPokemonData, getListOfPokemon } from '../../services/fetchPokemonData';
 
+//util functions
+import  * as utilFunction from '../../util/util_functions';
 //styles
 import './style.css';
 
 //animations
-import {Animated} from "react-animated-css";
+import { Animated } from "react-animated-css";
 
 //redux
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { addPokemonList } from '../../redux/actions/index';
 
 //stepsprogressbar
@@ -63,87 +65,39 @@ class List extends Component{
 
     constructor(props){
         super(props);
-       this.handlePokemonSearch = this.handlePokemonSearch.bind(this);
+       this.filterPokemonListWhenSearch = this.filterPokemonListWhenSearch.bind(this);
        this.handleModalShow = this.handleModalShow.bind(this);
        this.handleModalHide = this.handleModalHide.bind(this);
-        this.handleSelectedPokemon = this.handleSelectedPokemon.bind(this);
+       this.handleSelectedPokemon = this.handleSelectedPokemon.bind(this);
     }
 
 
+    componentDidMount(){
+        this.setPokemonListByLimit(0,itemsByPage);
+      }
 
-    handlePokemonSearch  = (p)=>{
-        const pokemonName = p.currentTarget.value.toLowerCase().trim();
-       
-        let pokemonList=this.state.pokemonListTwo;
-        if(pokemonName !== ""){
-              pokemonList = this.state.pokemonListTwo.filter(pokemon=>{
-                return pokemon.name.includes(pokemonName)
-            })
-        }
-      
-        this.setState({
-            pokemonList
-        })
-  
-    }
-
-
-    handleGetPokeByGeneration = (generation)=>{
+    getPokemonListByGeneration = ( generation )=>{
 
         this.setState({
             offSet : generation.offset,
             allPokemons : generation.allPokemons,
             limit: generation.limit
         },()=>{
-            this.handlePokemonApi(`https://pokeapi.co/api/v2/pokemon/?offset=${this.state.offSet}&limit=${itemsByPage}`);
+            this.setPokemonListByLimit(
+                this.state.offSet,
+                itemsByPage
+            );
         });
     }
 
-    componentDidMount(){
-
-       this.handlePokemonApi(`https://pokeapi.co/api/v2/pokemon/?offset=0&limit=${itemsByPage}`);
-
-    }
-
-     handleModalShow(pokemon){
-
-        this.setState({
-            modalShow : true,
-            chain:"loading...",
-            description: null,
-            pokemon
-        },()=>{
-            this.fetchPokemonDetails()
-        })
-
-     }
-
-
-
-    async fetchPokemonDetails () {
-
-        const {pokemonNo} = this.state.pokemon;
-        let pokeData = fetchPokemonData(pokemonNo);
-        pokeData.then(d=>{
-            this.setState(d);
-        })
-
-    }
-
-
-    handleModalHide(e){
-
-       this.setState({
-            modalShow : false
-        })
-    }
-
-    handlePokemonApi = (url)=>{
+   
+    setPokemonListByLimit = (offset,limit)=>{
+        
         let pokemonList =[];
         let pokemonListTwo=[];
-        this.setState({pokemonList,listFetched:false})
-
-        fetch(url).then(res=>res.json()).then(
+        this.setState({pokemonList,listFetched:false});
+           
+        getListOfPokemon(offset,limit).then(res=>res.json()).then(
            ({results})=>{
                 pokemonList = results;
                 pokemonListTwo = results;
@@ -152,7 +106,14 @@ class List extends Component{
        )
     }
 
-    handleSelectedPokemon = (pokemonSelected)=>{
+    handleModalHide(e){
+
+       this.setState({
+            modalShow : false
+        })
+    }
+
+    handleSelectedPokemon = ( pokemonSelected )=>{
         
         const isChecked = pokemonSelected.checked;
         
@@ -176,26 +137,16 @@ class List extends Component{
     }   
     
 
-    addPokemonCheckedToMainList=(pokemonSelected)=>{
+    addPokemonCheckedToMainList=( pokemonSelected )=>{
 
-        const isChecked = pokemonSelected.checked;
-    
         this.setState({
-            pokemonList : this.state.pokemonList.map(poke=>
-                poke.name === pokemonSelected.pokemonName ? {...poke, isChecked}:poke
-            ),
-            pokemonListTwo : this.state.pokemonListTwo.map(poke=>
-                poke.name === pokemonSelected.pokemonName ? {...poke, isChecked}:poke
-            )
+            pokemonList : utilFunction.setPokemonSelectedToList(this.state.pokemonList,pokemonSelected),
+            pokemonListTwo : utilFunction.setPokemonSelectedToList(this.state.pokemonListTwo,pokemonSelected)
         },()=>{
-            this.toggleNextButton();    
-        })
-    }
-
-    toggleNextButton=()=>{
-        const cantidadSeleccionados = this.state.listaSeleccionados;
-        this.setState({
-            showNextButton: cantidadSeleccionados === 6
+            const cantidadSeleccionados = this.state.listaSeleccionados;
+            this.setState({
+                showNextButton: cantidadSeleccionados === 6
+            })
         })
     }
 
@@ -219,75 +170,13 @@ class List extends Component{
         return index;
     }
 
-    getImgsPokemonsSelected = (includeCloseButton)=>{
+   
+    filterPokemonByNo = ( thispokemon )=>{
 
-        let allPokeImgsSelected = [];
-        const seleccionados = this.getPokemonsSelectedistObject();
-
-        for(let index=1;index<=6;index++){
-            if(typeof seleccionados[index-1]  !== "undefined"){
-                
-                allPokeImgsSelected.push(
-                    this.getPokeImgSelected(index,includeCloseButton)
-                );
-                continue;
-            }
-            allPokeImgsSelected.push(
-                this.getDefaultImgBall(index)
-            )
-        }
-
-        return allPokeImgsSelected.map(s=>s);
-    }
-  
-    getPokemonsSelectedistObject(){
-        const seleccionados = this.state.pokemonListTwo.length>0 ?
-        this.state.pokemonListTwo.filter(poke=>{
-            return poke.isChecked
-        }):[];
-
-        return seleccionados;
-    }
-    getPokeImgSelected(index,includeCloseButton){
-        
-        const seleccionados = this.getPokemonsSelectedistObject();
-        const pokemonName = seleccionados[index-1].name;
-        return (
-            <div key={index} className='containerPokeChoose'>
-                    <img alt="" className='styleImgPokeChoose' key={index} 
-                    src={`${urlNormal}${pokemonName}.png`}></img>
-                    <label                   
-                    onClick={()=>this.handleSelectedPokemon({
-                        pokemonName,
-                        checked:false
-                    })}className='styleXChoose'>
-                        <span 
-                        className={includeCloseButton?"showContainer":"hideContainer"}>X
-                        </span>
-                    </label> 
-            </div>    
-        )
-    }
-    getDefaultImgBall=(index)=>{
-        return (
-            <div key={index} className='containerPokeChoose'>
-                <img alt="" key={index} className='styleBallChooseTwo' src={require('../../img/pokeball.png')}></img>
-            </div>
-        )
-    }
-    
-    filterPokemonByNo = (thispokemon)=>{
-
-        const pokemonNo = this.getPokemonNo(thispokemon);
+        const pokemonNo = utilFunction.getPokemonNumber(thispokemon);
         const isPokemonOfGeneration = pokemonNo <= this.state.limit;
         return isPokemonOfGeneration;
     }
-    getPokemonNo = (thispokemon)=>{
-        const pokemonNo = thispokemon.url.split("/")[6];
-        thispokemon["pokemonNo"] = parseInt(pokemonNo);
-        return pokemonNo;   
-    }
-
     getPokemonList=()=>{
         let pokemonListContainer =  this.state.pokemonList.filter(p=>this.filterPokemonByNo(p))
         .map((thispokemon,index)=>{
@@ -304,15 +193,32 @@ class List extends Component{
         return pokemonListContainer;
     }
 
-    handleChangeViewBySteps =(btn)=>{
+    handleModalShow(pokemon){
 
-            if(btn ==='next' && this.state.stepTwo){
+        this.setState({
+            modalShow : true,
+            chain:"loading...",
+            description: null,
+            pokemon
+        },()=>{
+            
+            const {pokemonNo} = this.state.pokemon;
+            fetchPokemonData(pokemonNo).then(data=>{
+                this.setState(data);
+            });
+        })
+
+     }
+        
+     changeViewBySteps =( button )=>{
+
+            if(button ==='next' && this.state.stepTwo){
                 return;
-            }else if(btn==='play'){
+            }else if(button==='play'){
                 this.setState({
                     play: true,
                     pokemonsNamesRandom: this.pokemonRandom,
-                    pokemonSelectedListOfNames: this.getPokemonsSelectedistObject()
+                    pokemonSelectedListOfNames: utilFunction.getPokemonsSelectedFromList(this.state.pokemonListTwo)
                 });
                 return;
             }
@@ -326,8 +232,22 @@ class List extends Component{
             );
       
     }  
-    setPokemonRandom(pokemonRandom){
-        this.pokemonRandom = pokemonRandom;
+    
+
+    filterPokemonListWhenSearch  = ( lastInput )=>{
+
+        const pokemonName = lastInput.currentTarget.value.toLowerCase().trim();
+        let pokemonList =  this.state.pokemonListTwo;
+        
+        if(pokemonList !== ""){
+             pokemonList = utilFunction.filterPokemonListByName(pokemonName,this.state);
+       
+        }
+        
+        this.setState({
+            pokemonList 
+        });
+  
     }
     render(){
 
@@ -341,7 +261,7 @@ class List extends Component{
             return(
             <>
                 <div className='sticky-nav'>
-                    <Search onChange={this.handlePokemonSearch}/>
+                    <Search onChange={this.filterPokemonListWhenSearch}/>
                     <Steps state={this.state}></Steps>
                     <Animated 
                         animationInDuration={1000}
@@ -355,11 +275,8 @@ class List extends Component{
                         animationInDuration={1000}
                         animationIn="bounceInDown" 
                         isVisible={!this.state.stepTwo}>
-                        <div className={
-                            !this.state.stepTwo?'containerPokemonsChoosen':
-                            'hideContainer'
-                        }>
-                            {this.getImgsPokemonsSelected(showCloseButton)}
+                        <div className={!this.state.stepTwo?'containerPokemonsChoosen':'hideContainer'}>
+                            {utilFunction.getImgFromPokemonsSelectedList(this.state.pokemonListTwo, showCloseButton)}
                             <img alt="" className=
                             {this.state.showNextButton?'showChooseSuccess':'hideChooseSuccess'} 
                             src={require('../../img/chooseSuccess.png')}></img>
@@ -388,8 +305,8 @@ class List extends Component{
                 <div className='containerPokemon'>
                     <LISTOPONENTS 
                      state={this.state}
-                     pokemonSelected ={this.getImgsPokemonsSelected(false)}
-                     pokemonRandom = {(pokemonRandom)=>this.setPokemonRandom(pokemonRandom)}
+                     pokemonSelected ={utilFunction.getImgFromPokemonsSelectedList(this.state.pokemonListTwo,false)}
+                     pokemonRandom = {(pokemonRandom) => this.pokemonRandom = pokemonRandom}
                      >                         
                     </LISTOPONENTS>
 
@@ -399,7 +316,7 @@ class List extends Component{
                 </div>
                     
                 <BACKFORWARD 
-                changeView={(btn)=>this.handleChangeViewBySteps(btn)} 
+                changeView={(btn)=>this.changeViewBySteps(btn)} 
                 steps={this.state}></BACKFORWARD>
                   
                 <PokemonDetailModal
@@ -486,14 +403,6 @@ class PokemonItem extends Component{
             
             </>
         )
-            
-         
-            
-           
-            
-           
-        
     }
 }
-
 export default PokemonList;
