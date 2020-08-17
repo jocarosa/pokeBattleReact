@@ -113,28 +113,7 @@ class List extends Component{
         })
     }
 
-    handleSelectedPokemon = ( pokemonSelected )=>{
-        
-        const isChecked = pokemonSelected.checked;
-        
-        if(this.state.listaSeleccionados === 6 &&  isChecked){
-            this.showErrorMessage();
-            return
-        }else if(isChecked){
-            this.setState(
-                (prev,p)=>({listaSeleccionados : prev.listaSeleccionados + 1}),
-                ()=>{}
-            )
-        }else{
-            this.setState(
-                (prev,p)=>({listaSeleccionados : prev.listaSeleccionados - 1}),
-                ()=>{}
-               )
-        }
-
-            
-        this.addPokemonCheckedToMainList(pokemonSelected);
-    }   
+       
     
 
     addPokemonCheckedToMainList=( pokemonSelected )=>{
@@ -161,15 +140,6 @@ class List extends Component{
        })
        this.showErrorExClass = true;
     }
-
-    getPokemonIndexFromList = (pokemonList,pokemonName)=>{
-        const index = pokemonList.findIndex(
-            SelectedPoke=>SelectedPoke.pokemonName === pokemonName
-        );
-
-        return index;
-    }
-
    
     filterPokemonByNo = ( thispokemon )=>{
 
@@ -191,6 +161,29 @@ class List extends Component{
                 )
         })
         return pokemonListContainer;
+    }
+
+    handleSelectedPokemon = ( pokemonSelected )=>{
+        
+        const isChecked = pokemonSelected.checked;
+        
+        if(this.state.listaSeleccionados === 6 &&  isChecked){
+            this.showErrorMessage();
+            return
+        }else if(isChecked){
+            this.setState(
+                (prev,p)=>({listaSeleccionados : prev.listaSeleccionados + 1}),
+                ()=>{}
+            )
+        }else{
+            this.setState(
+                (prev,p)=>({listaSeleccionados : prev.listaSeleccionados - 1}),
+                ()=>{}
+               )
+        }
+
+            
+        this.addPokemonCheckedToMainList(pokemonSelected);
     }
 
     handleModalShow(pokemon){
